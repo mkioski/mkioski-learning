@@ -15,11 +15,13 @@ class Guess extends React.Component {
   render() {
 
     //dynamically create the boxes for each letter in the word
-    const result = checkCorrect(this.props.letters);
-    const wordboxes = result.map((step,move) => {
-      const s = (step===2) ? "abc-correct" : "abc-incorrect";
-      return (<Square key={move} letter={this.props.letters.charAt(move)} status={s} />);
+    let score = Array(this.props.letters.length).fill('');
+    if (this.props.score) score = this.props.score;
+    
+    const wordboxes = score.map((color,index) => {
+      return (<Square key={index} letter={this.props.letters.charAt(index)} status={color} />);
     });
+    
 
     return (
       <div className="board-row">
@@ -37,7 +39,8 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state= {
-      history: Array(0).fill(''),
+      wordhistory: Array(0).fill(''),
+      scorehistory: Array(0).fill(''),
       currentGuess: '',
       guesses: 0
     };
@@ -58,12 +61,33 @@ class Game extends React.Component {
   //check the word, commit it to history, and move to the next guess
   handleMyGuess() {
     const g = this.state.guesses;
-    const h = this.state.history;
+    const h = this.state.wordhistory;
+    const s = this.state.scorehistory;
+
+    //map colors to the word's indeces
+    const score = checkCorrect(this.state.currentGuess).map((letter) => {
+      switch(letter) {
+        case 2:
+          return "abc-correct";
+          break;
+        case 3:
+          return "abc-juxtaposed";
+          break;
+        default:
+          return "abc-incorrect";
+      };
+    });
+    
+    //add guess and its score to histories
     h.push(this.state.currentGuess);
+    s.push(score);
+    
+    //reset for next guess
     this.setState({ 
       guesses: g+1,
       currentGuess: '',
-      history: h
+      wordhistory: h,
+      scorehistory: s
     });
     console.log(h);
   } 
@@ -71,10 +95,10 @@ class Game extends React.Component {
   render() {
 
     //Before rendering, create components for previous guesses
-    const history = this.state.history;
-    const guesses = history.map((step,move) => {
-      const word = (move===this.state.guesses) ? this.state.currentGuess : step;
-      return (<Guess key={move} letters={word} />);
+    const history = this.state.wordhistory;
+    const guesses = history.map((element,index) => {
+      const word = (index===this.state.guesses) ? this.state.currentGuess : element;
+      return (<Guess key={index} letters={word} score={this.state.scorehistory[index]}/>);
     });
     
 
@@ -84,7 +108,7 @@ class Game extends React.Component {
         <div className="game-board">
           <>
           {guesses}
-          <Guess letters={this.state.currentGuess} />
+          <Guess letters={this.state.currentGuess} score={Array(6).fill('')} />
           </>
         </div>
         
