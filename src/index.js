@@ -152,6 +152,12 @@ ReactDOM.render(
 
 function checkWord(word) {return true;} //checks dictionary for word correctness
 
+function numberOfs(word, letter) { //returns the number of times a character is in a string
+  const n = (word.match(new RegExp(letter, 'g')) || []).length;
+  console.log(word +" contains "+ n +" '"+ letter +"'s");
+  return n;
+}
+
 function checkCorrect(word) {     //checks correctness of the submitted word
   
   const answer = "KIOSKI";
@@ -161,9 +167,17 @@ function checkCorrect(word) {     //checks correctness of the submitted word
 
 
   let index = 0;
+  let subst = '';
   for (const r of word) {
-    if (r===answer.charAt(index)) result[index]=2;
-    else if (answer.includes(r)) result[index]=3;
+    if (r===answer.charAt(index)) result[index]=2;    //correct
+    else if (answer.includes(r)) {
+    
+      result[index]=3;                                //wrong spot
+      subst = word.substring(0,index+1);
+      if (numberOfs(subst,r) > numberOfs(answer,r))
+        result[index]=1;                              //too many wrong spot
+
+    }
     index++;
   }
   console.log("Debug checker: "+ word +" ? "+ answer +": "+ result);
