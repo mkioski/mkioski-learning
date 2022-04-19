@@ -5,7 +5,7 @@ import './index.css';
 function Square(props) {
   return (
     <div className="square">
-      {props.value}
+      <div className={props.status}>{props.letter}</div>
     </div>
   );
 }
@@ -13,15 +13,18 @@ function Square(props) {
 class Guess extends React.Component {
 
   render() {
+
+    //dynamically create the boxes for each letter in the word
+    const result = checkCorrect(this.props.letters);
+    const wordboxes = result.map((step,move) => {
+      const s = (step===2) ? "abc-correct" : "abc-incorrect";
+      return (<Square key={move} letter={this.props.letters.charAt(move)} status={s} />);
+    });
+
     return (
       <div className="board-row">
         <>
-        <Square value={this.props.letters.charAt(0)} />
-        <Square value={this.props.letters.charAt(1)} />
-        <Square value={this.props.letters.charAt(2)} />
-        <Square value={this.props.letters.charAt(3)} />
-        <Square value={this.props.letters.charAt(4)} />
-        <Square value={this.props.letters.charAt(5)} />
+        {wordboxes}
         </>
       </div>
     );
@@ -29,6 +32,8 @@ class Guess extends React.Component {
 }
 
 class Game extends React.Component {
+
+  //initialize state with empty history
   constructor(props) {
     super(props);
     this.state= {
@@ -42,6 +47,7 @@ class Game extends React.Component {
 
   }
 
+  //maintain the word as it's being written
   handleChange(event) {
     const text = event.target.value.replace(/[^A-z]/, '').toUpperCase();
     this.setState({
@@ -49,6 +55,7 @@ class Game extends React.Component {
     });
   }
 
+  //check the word, commit it to history, and move to the next guess
   handleMyGuess() {
     const g = this.state.guesses;
     const h = this.state.history;
@@ -62,8 +69,8 @@ class Game extends React.Component {
   } 
 
   render() {
-    
 
+    //Before rendering, create components for previous guesses
     const history = this.state.history;
     const guesses = history.map((step,move) => {
       const word = (move===this.state.guesses) ? this.state.currentGuess : step;
@@ -95,7 +102,7 @@ class Game extends React.Component {
         <ul>
           <li><s>Display letters in boxes</s></li>
           <li>Add keyboard buttons</li>
-          <li>Show correctness of submitted word</li>
+          <li>Show correctness of word only when submitted</li>
           <li><s>Move focus when submitted</s></li>
           <li>Pull word from external source</li>
           <li>Check validity of word before submitting</li>
@@ -121,4 +128,21 @@ ReactDOM.render(
 
 function checkWord(word) {return true;} //checks dictionary for word correctness
 
+function checkCorrect(word) {     //checks correctness of the submitted word
+  
+  const answer = "KIOSKI";
+  let result = Array(6).fill("1");
+
+  //Algorithm for checking word here
+
+
+  let index = 0;
+  for (const r of word) {
+    if (r===answer.charAt(index)) result[index]=2;
+    else if (answer.includes(r)) result[index]=3;
+    index++;
+  }
+  console.log("Debug checker: "+ word +" ? "+ answer +": "+ result);
+  return result;
+} 
 
