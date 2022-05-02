@@ -1,0 +1,20 @@
+Wordle State
+
+I have been working on a prototype Wordle clone to teach myself Javascript and React. I chose Wordle because it’s self-contained and I understand the requirements, but it also has room to make design changes. For example, my prototype is coded to accept six-letter words instead of five.
+
+As it exists now, the app takes input from a text field and compares the letters to a hard-coded answer word. The correctness of each letter is shown with colors. There is enough there for the code to be reviewed before more functionality is added.
+
+Here are some things that could be added next:
+
+Game Functionality
+	Add a “win state” if the word is guessed exactly
+	Add a keyboard map as alternate input method
+	Fix the algorithm to show the correct number of yellow letters
+	Check the input against a dictionary so as to allow only English words
+	Add a “lose state” after a certain number of incorrect guesses
+	Select a random answer word for each new game
+
+Other development functionality
+	Add design to CSS so it looks nice
+	Embed in web page rather than run as React App
+	Add configuration to enable rules changes (variable word lengths, etc) or reusing the code in different environments
